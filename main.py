@@ -1,6 +1,8 @@
 import os
 import requests
 import telebot
+import threading
+from flask import Flask
 
 # Получаем токены из переменных окружения
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
@@ -58,6 +60,20 @@ def generate_amigurumi(message):
         bot.send_message(message.chat.id, f"Произошла ошибка:\n{e}")
         print("ОШИБКА:", e)
 
-if __name__ == "__main__":
+# Flask-заглушка для Render
+app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return "Amigurumi bot is running!"
+
+def run_polling():
     print("Бот запущен!")
     bot.polling(none_stop=True)
+
+if __name__ == "__main__":
+    # Запускаем polling в отдельном потоке
+    threading.Thread(target=run_polling).start()
+    # Запускаем Flask на нужном порту для Render
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
