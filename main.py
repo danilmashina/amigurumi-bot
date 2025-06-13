@@ -2,7 +2,6 @@ import os
 import requests
 import telebot
 
-# Получаем токены из переменных окружения
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
@@ -11,15 +10,12 @@ if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-# Адрес OpenRouter API
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-# Обработчик всех входящих сообщений
 @bot.message_handler(func=lambda message: True)
 def generate_amigurumi(message):
     user_input = message.text
 
-    # Формируем промпт для модели
     prompt = (
         "Сгенерируй простую и понятную схему вязания амигуруми по следующему описанию: "
         f"{user_input}. "
@@ -32,7 +28,7 @@ def generate_amigurumi(message):
     }
 
     payload = {
-        "model": "openai/gpt-3.5-turbo",  # или другая модель, доступная в OpenRouter
+        "model": "gpt-3.5-turbo",
         "messages": [
             {"role": "user", "content": prompt}
         ],
