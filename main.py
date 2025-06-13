@@ -26,7 +26,7 @@ def generate_amigurumi(message):
         }
 
         payload = {
-            "model": "anthropic/claude-3-haiku",  # Можно заменить на другую, если хочешь
+            "model": "anthropic/claude-3-haiku",
             "messages": [
                 {"role": "user", "content": prompt}
             ],
@@ -34,18 +34,24 @@ def generate_amigurumi(message):
             "max_tokens": 800
         }
 
+        # Сначала отправляем запрос
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
         response.raise_for_status()
 
-        # ❗ Важно: структура ответа у OpenRouter (Claude) отличается
-        # Нужно вытаскивать ответ по ключу ["choices"][0]["message"]["content"]
+        # Печатаем отладочную информацию
+        print("STATUS CODE:", response.status_code)
+        print("RESPONSE TEXT:", response.text)
+
+        # Получаем ответ от модели
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
+        # Отправляем ответ пользователю
         bot.send_message(message.chat.id, answer)
 
     except Exception as e:
-        bot.send_message(message.chat.id, f"Ошибка: {e}")
+        bot.send_message(message.chat.id, f"Произошла ошибка: {e}")
+        print("Ошибка:", e)
 
 # Запуск бота
 bot.polling()
