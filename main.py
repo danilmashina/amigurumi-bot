@@ -29,7 +29,7 @@ def generate_amigurumi(message):
     }
 
     payload = {
-        "model": "anthropic/claude-3-haiku",
+        "model": "openai/gpt-3.5-turbo",
         "messages": [
             {"role": "user", "content": prompt}
         ],
