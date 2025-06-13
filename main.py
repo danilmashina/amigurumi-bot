@@ -4,23 +4,22 @@ import telebot
 
 # Получаем токены из переменных окружения
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
-if not TELEGRAM_TOKEN or not OPENAI_API_KEY:
-    raise Exception("Не заданы переменные окружения TELEGRAM_TOKEN и/или OPENAI_API_KEY!")
+if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
+    raise Exception("Не заданы переменные окружения TELEGRAM_TOKEN и/или OPENROUTER_API_KEY!")
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
+# Адрес OpenRouter API
+OPENROUTER_API_URL = "https://api.openrouter.ai/v1/chat/completions"
 
+# Обработчик всех входящих сообщений
 @bot.message_handler(func=lambda message: True)
 def generate_amigurumi(message):
-    user_input = message.text.strip()
+    user_input = message.text
 
-    if not user_input:
-        bot.send_message(message.chat.id, "Пожалуйста, пришлите описание амигуруми для генерации схемы.")
-        return
-
+    # Формируем промпт для модели
     prompt = (
         "Сгенерируй простую и понятную схему вязания амигуруми по следующему описанию: "
         f"{user_input}. "
@@ -28,12 +27,12 @@ def generate_amigurumi(message):
     )
 
     headers = {
-        "Authorization": f"Bearer {OPENAI_API_KEY}",
+        "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json"
     }
 
     payload = {
-        "model": "gpt-3.5-turbo",
+        "model": "openai/gpt-3.5-turbo",  # или другая модель, доступная в OpenRouter
         "messages": [
             {"role": "user", "content": prompt}
         ],
@@ -42,22 +41,21 @@ def generate_amigurumi(message):
     }
 
     try:
-        response = requests.post(OPENAI_API_URL, json=payload, headers=headers, timeout=30)
-        response.raise_for_status()  # выбросит ошибку при статусе != 2xx
+        response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
+        print("STATUS CODE:", response.status_code)
+        print("RESPONSE TEXT:", response.text)
+
+        if response.status_code != 200:
+            raise Exception(f"OpenRouter API вернул ошибку {response.status_code}: {response.text}")
 
         result = response.json()
-
         answer = result["choices"][0]["message"]["content"]
+
         bot.send_message(message.chat.id, answer)
 
-    except requests.exceptions.RequestException as e:
-        bot.send_message(message.chat.id, f"Произошла ошибка при подключении к OpenAI API:\n{e}")
-        print("Ошибка подключения:", e)
-
     except Exception as e:
-        bot.send_message(message.chat.id, f"Произошла непредвиденная ошибка:\n{e}")
-        print("Ошибка:", e)
-
+        bot.send_message(message.chat.id, f"Произошла ошибка:\n{e}")
+        print("ОШИБКА:", e)
 
 if __name__ == "__main__":
     print("Бот запущен!")
