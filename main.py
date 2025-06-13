@@ -3,8 +3,8 @@ import requests
 import telebot
 
 # Получаем токены из переменных окружения
-TELEGRAM_TOKEN = os.getenv("7769564086:AAGjVg1dyk-bnR2Uc8U58u1-5cWTKuFKduM")
-OPENROUTER_API_KEY = os.getenv("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")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
     raise Exception("Не заданы переменные окружения TELEGRAM_TOKEN и/или OPENROUTER_API_KEY!")
@@ -26,7 +26,7 @@ def generate_amigurumi(message):
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
         "Content-Type": "application/json",
-        "Referer": "https://example.com",  # Обычно достаточно просто Referer
+        "Referer": "https://example.com",
         "X-Title": "amigurumi-bot"
     }
 
