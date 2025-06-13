@@ -28,7 +28,7 @@ def generate_amigurumi(message):
     }
 
     payload = {
-        "model": "claude-3-haiku",
+        "model": "openai/gpt-4o",
         "messages": [
             {"role": "user", "content": prompt}
         ],
