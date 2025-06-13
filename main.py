@@ -28,7 +28,7 @@ def generate_amigurumi(message):
     }
 
     payload = {
-        "model": "gpt-3.5-turbo",
+        "model": "Claude 3 Haiku",
         "messages": [
             {"role": "user", "content": prompt}
         ],
