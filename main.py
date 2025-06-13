@@ -21,7 +21,7 @@ def generate_amigurumi(message):
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://example.com",
+            "HTTP-Referer": "https://example.com",  # обязателен!
             "X-Title": "amigurumi-bot"
         }
 
@@ -34,24 +34,24 @@ def generate_amigurumi(message):
             "max_tokens": 800
         }
 
-        # Сначала отправляем запрос
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
-        response.raise_for_status()
 
-        # Печатаем отладочную информацию
+        # Выводим отладочную информацию
         print("STATUS CODE:", response.status_code)
         print("RESPONSE TEXT:", response.text)
 
-        # Получаем ответ от модели
+        # Проверяем, есть ли тело
+        if response.status_code != 200:
+            raise Exception(f"OpenRouter вернул ошибку {response.status_code}: {response.text}")
+
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
-        # Отправляем ответ пользователю
         bot.send_message(message.chat.id, answer)
 
     except Exception as e:
-        bot.send_message(message.chat.id, f"Произошла ошибка: {e}")
-        print("Ошибка:", e)
+        bot.send_message(message.chat.id, f"Произошла ошибка:\n{e}")
+        print("ОШИБКА:", e)
 
 # Запуск бота
 bot.polling()
