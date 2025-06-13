@@ -5,7 +5,7 @@ import telebot
 bot = telebot.TeleBot('7769564086:AAGjVg1dyk-bnR2Uc8U58u1-5cWTKuFKduM')
 
 # OpenRouter API
-OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+OPENROUTER_API_URL = "https://openrouter.ai/v1/chat/completions"
 OPENROUTER_API_KEY = "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"
 
 @bot.message_handler(func=lambda message: True)
@@ -20,7 +20,9 @@ def generate_amigurumi(message):
     try:
         headers = {
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://example.com",
+            "X-Title": "amigurumi-bot"
         }
 
         payload = {
