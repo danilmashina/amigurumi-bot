@@ -47,8 +47,7 @@ def generate_amigurumi(message):
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
-        bot.send_message(message.chat.id, answer)
-
+        bot.send_message(message.chat.id, answer[:4096])
     except Exception as e:
         bot.send_message(message.chat.id, f"Произошла ошибка:\n{e}")
         print("ОШИБКА:", e)
