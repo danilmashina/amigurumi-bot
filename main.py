@@ -12,7 +12,7 @@ if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
 # Адрес OpenRouter API
-OPENROUTER_API_URL = "https://api.openrouter.ai/v1/chat/completions"
+OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 # Обработчик всех входящих сообщений
 @bot.message_handler(func=lambda message: True)
