@@ -11,7 +11,7 @@ if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
 
 bot = telebot.TeleBot(TELEGRAM_TOKEN)
 
-OPENROUTER_API_URL = "https://openrouter.ai/v1/chat/completions"
+OPENROUTER_API_URL = "https://api.openrouter.ai/v1/chat/completions"  # Исправленный URL
 
 @bot.message_handler(func=lambda message: True)
 def generate_amigurumi(message):
@@ -25,9 +25,7 @@ def generate_amigurumi(message):
 
     headers = {
         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-        "Content-Type": "application/json",
-        "Referer": "https://example.com",
-        "X-Title": "amigurumi-bot"
+        "Content-Type": "application/json"
     }
 
     payload = {
@@ -46,6 +44,10 @@ def generate_amigurumi(message):
 
         if response.status_code != 200:
             raise Exception(f"OpenRouter вернул ошибку {response.status_code}: {response.text}")
+
+        # Проверяем, что ответ действительно JSON, а не HTML
+        if "application/json" not in response.headers.get("Content-Type", ""):
+            raise Exception("OpenRouter вернул не JSON:\n" + response.text)
 
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
