@@ -15,7 +15,11 @@ OPENAI_API_URL = "https://api.openai.com/v1/chat/completions"
 
 @bot.message_handler(func=lambda message: True)
 def generate_amigurumi(message):
-    user_input = message.text
+    user_input = message.text.strip()
+
+    if not user_input:
+        bot.send_message(message.chat.id, "Пожалуйста, пришлите описание амигуруми для генерации схемы.")
+        return
 
     prompt = (
         "Сгенерируй простую и понятную схему вязания амигуруми по следующему описанию: "
@@ -38,21 +42,22 @@ def generate_amigurumi(message):
     }
 
     try:
-        response = requests.post(OPENAI_API_URL, json=payload, headers=headers)
-        print("STATUS CODE:", response.status_code)
-        print("RESPONSE TEXT:", response.text)
-
-        if response.status_code != 200:
-            raise Exception(f"OpenAI API вернул ошибку {response.status_code}: {response.text}")
+        response = requests.post(OPENAI_API_URL, json=payload, headers=headers, timeout=30)
+        response.raise_for_status()  # выбросит ошибку при статусе != 2xx
 
         result = response.json()
-        answer = result["choices"][0]["message"]["content"]
 
+        answer = result["choices"][0]["message"]["content"]
         bot.send_message(message.chat.id, answer)
 
+    except requests.exceptions.RequestException as e:
+        bot.send_message(message.chat.id, f"Произошла ошибка при подключении к OpenAI API:\n{e}")
+        print("Ошибка подключения:", e)
+
     except Exception as e:
-        bot.send_message(message.chat.id, f"Произошла ошибка:\n{e}")
-        print("ОШИБКА:", e)
+        bot.send_message(message.chat.id, f"Произошла непредвиденная ошибка:\n{e}")
+        print("Ошибка:", e)
+
 
 if __name__ == "__main__":
     print("Бот запущен!")
