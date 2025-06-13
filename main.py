@@ -45,9 +45,6 @@ def generate_amigurumi(message):
         if response.status_code != 200:
             raise Exception(f"OpenAI API вернул ошибку {response.status_code}: {response.text}")
 
-        if "application/json" not in response.headers.get("Content-Type", ""):
-            raise Exception("OpenAI API вернул не JSON:\n" + response.text)
-
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
