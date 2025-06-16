@@ -1,0 +1,21 @@
+amigurumi-bot/
+├── data/
+│   ├── animals/
+│   │   ├── rabbits/
+│   │   ├── bears/
+│   │   └── ...другие животные
+│   ├── food/
+│   ├── dolls/
+│   └── furniture/
+├── visual/
+│   ├── rabbits/
+│   ├── bears/
+│   └── ...
+├── templates/
+│   ├── heads/
+│   ├── bodies/
+│   ├── ears/
+│   └── tails/
+├── bot/
+│   └── ...будущий код Telegram-бота
+└── README.md
