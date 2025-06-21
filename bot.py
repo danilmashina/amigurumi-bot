@@ -29,7 +29,7 @@ def generate_amigurumi(message):
             "Authorization": f"Bearer {OPENROUTER_API_KEY}",
             "Content-Type": "application/json",
             "HTTP-Referer": "https://t.me/YourAmigurumiBot",  # 🔥 УКАЖИ здесь свой Telegram бот/сайт
-            "X-Title": "AmigurumiBot",  # 🔥 Название твоего бота или сайта
+            "X-Title": "YourAmigurumi",  # 🔥 Название твоего бота или сайта
         }
 
         payload = {
