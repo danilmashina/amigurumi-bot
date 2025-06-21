@@ -3,14 +3,11 @@ import requests
 import telebot
 from dotenv import load_dotenv
 
-# Загрузка переменных окружения из .env (если запускаешь локально)
 load_dotenv()
 
-# Получение токенов из окружения
 TELEGRAM_TOKEN = os.getenv("BOT_TOKEN")
-OPENROUTER_API_KEY = os.getenv("Bearer OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")  # 🔧 исправлено
 
-# Проверка на наличие переменных
 if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
     raise ValueError("BOT_TOKEN или OPENROUTER_API_KEY не заданы!")
 
@@ -29,21 +26,20 @@ def generate_amigurumi(message):
 
     try:
         headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",  # 👈 Bearer добавляется здесь
             "Content-Type": "application/json"
         }
 
         payload = {
             "model": "qwen/qwen3-235b-a22b:free",
-            "messages": [
-                {"role": "user", "content": prompt}
-            ],
+            "messages": [{"role": "user", "content": prompt}],
             "temperature": 0.7,
             "max_tokens": 800
         }
 
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
         response.raise_for_status()
+
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
@@ -52,7 +48,6 @@ def generate_amigurumi(message):
     except Exception as e:
         bot.send_message(message.chat.id, f"Ошибка: {str(e)}")
 
-# Запуск бота
 if __name__ == "__main__":
     print("🤖 Бот запущен...")
     bot.polling()
