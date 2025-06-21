@@ -1,12 +1,22 @@
+import os
 import requests
 import telebot
+from dotenv import load_dotenv
 
-# Токен Telegram-бота
-bot = telebot.TeleBot('7769564086:AAGjVg1dyk-bnR2Uc8U58u1-5cWTKuFKduM')
+# Загрузка переменных окружения из .env (если запускаешь локально)
+load_dotenv()
 
-# OpenRouter API
+# Получение токенов из окружения
+TELEGRAM_TOKEN = os.getenv("BOT_TOKEN")
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+
+# Проверка на наличие переменных
+if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
+    raise ValueError("BOT_TOKEN или OPENROUTER_API_KEY не заданы!")
+
+bot = telebot.TeleBot(TELEGRAM_TOKEN)
+
 OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_API_KEY = "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"
 
 @bot.message_handler(func=lambda message: True)
 def generate_amigurumi(message):
@@ -24,7 +34,7 @@ def generate_amigurumi(message):
         }
 
         payload = {
-            "model": "qwen/qwen3-235b-a22b:free",  # Можно заменить на другую
+            "model": "qwen/qwen3-235b-a22b:free",
             "messages": [
                 {"role": "user", "content": prompt}
             ],
@@ -34,16 +44,15 @@ def generate_amigurumi(message):
 
         response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
         response.raise_for_status()
-
-        # ❗ Важно: структура ответа у OpenRouter (Claude) отличается
-        # Нужно вытаскивать ответ по ключу ["choices"][0]["message"]["content"]
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
         bot.send_message(message.chat.id, answer)
 
     except Exception as e:
-        bot.send_message(message.chat.id, f"Ошибка: {e}")
+        bot.send_message(message.chat.id, f"Ошибка: {str(e)}")
 
 # Запуск бота
-bot.polling()
+if __name__ == "__main__":
+    print("🤖 Бот запущен...")
+    bot.polling()
