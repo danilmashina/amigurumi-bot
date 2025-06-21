@@ -8,7 +8,7 @@ load_dotenv()
 
 # Получение токенов из окружения
 TELEGRAM_TOKEN = os.getenv("BOT_TOKEN")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+OPENROUTER_API_KEY = os.getenv("Bearer OPENROUTER_API_KEY")
 
 # Проверка на наличие переменных
 if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
