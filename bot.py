@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("BOT_TOKEN")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")  # 🔧 исправлено
+OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 
 if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
     raise ValueError("BOT_TOKEN или OPENROUTER_API_KEY не заданы!")
@@ -26,27 +26,30 @@ def generate_amigurumi(message):
 
     try:
         headers = {
-            "Authorization": f"Bearer {OPENROUTER_API_KEY}",  # 👈 Bearer добавляется здесь
-            "Content-Type": "application/json"
+            "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://t.me/YourAmigurumiBot",  # 🔥 УКАЖИ здесь свой Telegram бот/сайт
+            "X-Title": "AmigurumiBot",  # 🔥 Название твоего бота или сайта
         }
 
         payload = {
             "model": "qwen/qwen3-235b-a22b:free",
-            "messages": [{"role": "user", "content": prompt}],
+            "messages": [
+                {"role": "user", "content": prompt}
+            ],
             "temperature": 0.7,
             "max_tokens": 800
         }
 
-        response = requests.post(OPENROUTER_API_URL, json=payload, headers=headers)
+        response = requests.post(OPENROUTER_API_URL, headers=headers, json=payload)
         response.raise_for_status()
-
         result = response.json()
         answer = result["choices"][0]["message"]["content"]
 
         bot.send_message(message.chat.id, answer)
 
     except Exception as e:
-        bot.send_message(message.chat.id, f"Ошибка: {str(e)}")
+        bot.send_message(message.chat.id, f"Ошибка: {e}")
 
 if __name__ == "__main__":
     print("🤖 Бот запущен...")
