@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 TELEGRAM_TOKEN = os.getenv("BOT_TOKEN")
-OPENROUTER_API_KEY = os.getenv("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")
+OPENROUTER_API_KEY = os.getenv("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")
 
 if not TELEGRAM_TOKEN or not OPENROUTER_API_KEY:
     raise ValueError("BOT_TOKEN или OPENROUTER_API_KEY не заданы!")
